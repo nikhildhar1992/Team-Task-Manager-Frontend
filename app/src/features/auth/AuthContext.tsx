@@ -1,4 +1,4 @@
-import { type PropsWithChildren, createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import { type PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
 import { SESSION_EXPIRED_EVENT } from '../../lib/httpClient';
 import {
   clearSession as clearStoredSession,
@@ -8,17 +8,7 @@ import {
   setSession as setStoredSession,
 } from '../../lib/session';
 import type { AuthSession } from '../../types/auth';
-
-interface AuthContextValue {
-  session: AuthSession | null;
-  isAuthenticated: boolean;
-  applySession: (session: AuthSession) => void;
-  logout: (message?: string) => void;
-  notice: string | null;
-  clearNotice: () => void;
-}
-
-export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+import { AuthContext } from './authContextValue';
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<AuthSession | null>(() => getSession());

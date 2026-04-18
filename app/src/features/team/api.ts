@@ -9,7 +9,7 @@ export async function getCurrentTeam(): Promise<Team | null> {
   } catch (error: unknown) {
     if (typeof error === 'object' && error && 'response' in error) {
       const status = (error as { response?: { status?: number } }).response?.status;
-      if (status == 404) {
+      if (status === 404) {
         return null;
       }
     }

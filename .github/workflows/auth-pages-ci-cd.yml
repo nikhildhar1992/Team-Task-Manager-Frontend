@@ -1,0 +1,61 @@
+name: Auth Pages CI/CD
+
+on:
+  pull_request:
+    paths:
+      - 'app/src/features/auth/LoginPage.tsx'
+      - 'app/src/features/auth/SignupPage.tsx'
+      - 'app/eslint.config.js'
+      - 'app/package.json'
+      - 'app/package-lock.json'
+      - '.github/workflows/auth-pages-ci-cd.yml'
+  push:
+    paths:
+      - 'app/src/features/auth/LoginPage.tsx'
+      - 'app/src/features/auth/SignupPage.tsx'
+      - 'app/eslint.config.js'
+      - 'app/package.json'
+      - 'app/package-lock.json'
+      - '.github/workflows/auth-pages-ci-cd.yml'
+
+jobs:
+  auth-pages-ci:
+    name: Lint login/signup pages
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run targeted auth page lint checks
+        run: npx eslint src/features/auth/LoginPage.tsx src/features/auth/SignupPage.tsx
+
+  auth-pages-cd:
+    name: Publish auth page artifact
+    needs: auth-pages-ci
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Upload login/signup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: auth-pages-${{ github.sha }}
+          path: |
+            app/src/features/auth/LoginPage.tsx
+            app/src/features/auth/SignupPage.tsx
+          if-no-files-found: error

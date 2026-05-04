@@ -5,6 +5,7 @@ import { useLoginMutation } from './hooks';
 import { useAuth } from './useAuth';
 import { toApiError } from '../../lib/apiError';
 import { AuthShell } from './AuthShell';
+import { getLoginValidationMessage } from './validation.js';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
@@ -26,8 +27,9 @@ export function LoginPage() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!email || !password) {
-      setValidationMessage('Email and password are required.');
+    const nextValidationMessage = getLoginValidationMessage(email, password);
+    if (nextValidationMessage) {
+      setValidationMessage(nextValidationMessage);
       return;
     }
 

@@ -66,3 +66,13 @@ jobs:
             app/src/features/auth/LoginPage.tsx
             app/src/features/auth/SignupPage.tsx
           if-no-files-found: error
+
+
+report-to-cursor:
+  stage: .post        # Runs at the very end
+  when: on_failure    # ONLY triggers if a previous stage failed
+  script:
+    - |
+      curl -X POST -H "Content-Type: application/json" \
+      -d "{\"pipeline_id\": \"$CI_PIPELINE_ID\", \"project_id\": \"$CI_PROJECT_ID\"}" \
+      https://api2.cursor.sh/automations/webhook/6a146950-3a47-44cd-970b-98f2e6658cfe

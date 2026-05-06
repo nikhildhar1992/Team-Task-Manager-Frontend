@@ -67,18 +67,18 @@ jobs:
             app/src/features/auth/SignupPage.tsx
           if-no-files-found: error
 
-report-to-cursor:
-  runs-on: ubuntu-latest
-  needs: [auth-pages-ci]   # 👈 use your actual job name
-  if: failure()
+  report-to-cursor:
+    runs-on: ubuntu-latest
+    needs: [auth-pages-ci]   # 👈 use your actual job name
+    if: failure()
 
-  steps:
-    - name: Send failure to Cursor
-      run: |
-        echo "Triggering Cursor webhook"
-        echo "Run ID: ${{ github.run_id }}"
-        echo "Repo ID: ${{ github.repository_id }}"
+    steps:
+      - name: Send failure to Cursor
+        run: |
+          echo "Triggering Cursor webhook"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Repo ID: ${{ github.repository_id }}"
 
-        curl -v -X POST -H "Content-Type: application/json" \
-        -d "{\"pipeline_id\": \"${{ github.run_id }}\", \"project_id\": \"${{ github.repository_id }}\"}" \
-        https://api2.cursor.sh/automations/webhook/6a146950-3a47-44cd-970b-98f2e6658cfe
+          curl -v -X POST -H "Content-Type: application/json" \
+          -d "{\"pipeline_id\": \"${{ github.run_id }}\", \"project_id\": \"${{ github.repository_id }}\"}" \
+          https://api2.cursor.sh/automations/webhook/6a146950-3a47-44cd-970b-98f2e6658cfe

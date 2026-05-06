@@ -67,21 +67,22 @@ jobs:
             app/src/features/auth/SignupPage.tsx
           if-no-files-found: error
 
-  eport-to-cursor:
-  runs-on: ubuntu-latest
-  needs: [auth-pages-ci]
-  if: failure()
+  report-to-cursor:
+    runs-on: ubuntu-latest
+    needs: [auth-pages-ci]
+    if: failure()
 
-  steps:
-    - name: Capture logs
-      run: |
-        echo "Capturing logs..."
-        echo "LOG_CONTENT=$(echo 'Build failed at lint step' | base64)" >> $GITHUB_ENV
+    steps:
+      - name: Capture logs
+        run: |
+          echo "Capturing logs..."
+          LOG_CONTENT=$(echo "Build failed at lint step" | base64)
+          echo "LOG_CONTENT=$LOG_CONTENT" >> $GITHUB_ENV
 
-    - name: Send failure to Cursor
-      run: |
-        echo "Triggering Cursor webhook"
+      - name: Send failure to Cursor
+        run: |
+          echo "Triggering Cursor webhook"
 
-        curl -X POST -H "Content-Type: application/json" \
-        -d "{\"pipeline_id\": \"${{ github.run_id }}\", \"logs\": \"$LOG_CONTENT\"}" \
-        https://api2.cursor.sh/automations/webhook/6a146950-3a47-44cd-970b-98f2e6658cfe
+          curl -X POST -H "Content-Type: application/json" \
+          -d "{\"pipeline_id\": \"${{ github.run_id }}\", \"logs\": \"$LOG_CONTENT\"}" \
+          https://api2.cursor.sh/automations/webhook/6a146950-3a47-44cd-970b-98f2e6658cfe

@@ -49,7 +49,7 @@ export function LoginPage() {
   }
 
   return (
-    <AuthShell title="Login" subtitle="Access your task workspace from login page.">
+    <AuthShell title="Login" subtitle="Access the task workspace from login page.">
       <form className="space-y-4" onSubmit={handleSubmit}>
         {notice ? <p className="rounded-md bg-amber-50 p-2 text-sm text-amber-700">{notice}</p> : null}
         {validationMessage ? (

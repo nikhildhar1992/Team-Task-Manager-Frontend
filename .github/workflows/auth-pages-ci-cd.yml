@@ -84,5 +84,6 @@ jobs:
           echo "Triggering Cursor webhook"
 
           curl -X POST -H "Content-Type: application/json" \
+          -H "Authorization: Bearer ${{ crsr_134cd9f9a264a407e2f9823a7257ef4690a7420398a468a6dc01ded9a879dec8 }}" \
           -d "{\"pipeline_id\": \"${{ github.run_id }}\", \"logs\": \"$LOG_CONTENT\"}" \
           https://api2.cursor.sh/automations/webhook/6a146950-3a47-44cd-970b-98f2e6658cfe

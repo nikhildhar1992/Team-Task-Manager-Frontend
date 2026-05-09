@@ -41,7 +41,7 @@ export function LoginPage() {
       {
         onSuccess: (session) => {
           applySession(session);
-          const destination = (location.state as { from?: string } | null)?.from ?? '/tasks';
+          const destination = (location.state as { from?: string } | null)?.from ?? '/dashboard';
           navigate(destination, { replace: true });
         },
       },

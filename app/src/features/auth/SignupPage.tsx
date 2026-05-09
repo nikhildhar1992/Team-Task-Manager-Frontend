@@ -43,7 +43,7 @@ export function SignupPage() {
       {
         onSuccess: (session) => {
           applySession(session);
-          navigate('/tasks', { replace: true });
+          navigate('/dashboard', { replace: true });
         },
       },
     );

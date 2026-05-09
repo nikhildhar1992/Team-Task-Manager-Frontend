@@ -2,6 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../features/auth/useAuth';
 
 const navItems = [
+  { to: '/dashboard', label: 'Dashboard' },
   { to: '/teams', label: 'Teams' },
   { to: '/tasks', label: 'Tasks' },
   { to: '/ai-assistant', label: 'AI Assist' },

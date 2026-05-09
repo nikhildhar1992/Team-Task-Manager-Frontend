@@ -4,7 +4,7 @@ import { clearSession, getSession, setAuthNotice } from './session';
 export const SESSION_EXPIRED_EVENT = 'auth:session-expired';
 
 export const httpClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://192.168.1.17/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://192.168.1.17:3000/api/v1',
   timeout: 15000,
 });
 

@@ -10,6 +10,7 @@ export function SignupPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [teamName, setTeamName] = useState('');
   const [validationMessage, setValidationMessage] = useState<string | null>(null);
 
   const signupMutation = useSignupMutation();
@@ -26,8 +27,8 @@ export function SignupPage() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!name || !email || !password) {
-      setValidationMessage('Name, email, and password are required.');
+    if (!name || !email || !password || !teamName) {
+      setValidationMessage('Name, email, password, and team name are required.');
       return;
     }
 
@@ -36,10 +37,15 @@ export function SignupPage() {
       return;
     }
 
+    if (teamName.length < 2) {
+      setValidationMessage('Team name must be at least 2 characters.');
+      return;
+    }
+
     setValidationMessage(null);
 
     signupMutation.mutate(
-      { name, email, password },
+      { name, email, password, teamName },
       {
         onSuccess: (session) => {
           applySession(session);
@@ -87,6 +93,17 @@ export function SignupPage() {
             onChange={(event) => setPassword(event.target.value)}
             className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
             placeholder="Minimum 8 characters"
+          />
+        </label>
+
+        <label className="block">
+          <span className="mb-1 block text-sm font-medium text-slate-700">Team name</span>
+          <input
+            type="text"
+            value={teamName}
+            onChange={(event) => setTeamName(event.target.value)}
+            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            placeholder="Team Alpha"
           />
         </label>
 

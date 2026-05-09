@@ -1,25 +1,15 @@
-export type TeamRole = 'Admin' | 'Member';
-
 export interface Team {
-  id: string;
+  id: number;
   name: string;
-  description?: string;
+  createdAt?: string;
 }
 
-export interface TeamMember {
-  id: string;
+export interface TeamDetail {
+  id: number;
   name: string;
-  email: string;
-  role: TeamRole;
+  createdAt?: string;
 }
 
 export interface CreateTeamInput {
   name: string;
-  description?: string;
-}
-
-export interface InviteMemberInput {
-  name: string;
-  email: string;
-  role: TeamRole;
 }

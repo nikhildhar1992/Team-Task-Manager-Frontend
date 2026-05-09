@@ -1,39 +1,60 @@
-import type { PaginationParams } from './api';
-
-export type TaskStatus = 'Todo' | 'In Progress' | 'Done';
-export type TaskPriority = 'Low' | 'Medium' | 'High';
+export type TaskStatus = 'todo' | 'in_progress' | 'done';
+export type TaskPriority = 'low' | 'medium' | 'high';
+export type TaskSortBy = 'created_at' | 'priority';
+export type TaskSortOrder = 'asc' | 'desc';
 
 export interface Task {
-  id: string;
+  id: number;
+  teamId: number;
   title: string;
-  description?: string;
+  description?: string | null;
   status: TaskStatus;
   priority: TaskPriority;
-  assigneeId?: string;
-  assigneeName?: string;
-  dueDate?: string;
-  createdAt?: string;
+  assignedTo?: number | null;
+  deadline?: string | null;
+  createdBy: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateTaskInput {
+  teamId: number;
   title: string;
   description?: string;
-  assigneeId?: string;
-  status: TaskStatus;
-  priority: TaskPriority;
-  dueDate?: string;
-}
-
-export interface TaskListParams extends PaginationParams {
   status?: TaskStatus;
+  priority?: TaskPriority;
+  assignedTo?: number;
+  deadline?: string;
 }
 
-export interface AssignTaskInput {
-  taskId: string;
-  assigneeId?: string;
+export interface TaskListParams {
+  teamId: number;
+  limit?: number;
+  cursor?: string;
+  status?: TaskStatus;
+  assignedTo?: number;
+  search?: string;
+  sortBy?: TaskSortBy;
+  sortOrder?: TaskSortOrder;
 }
 
-export interface UpdateTaskStatusInput {
-  taskId: string;
-  status: TaskStatus;
+export interface TaskPageInfo {
+  nextCursor: string | null;
+  hasNextPage: boolean;
+}
+
+export interface TaskListResult {
+  items: Task[];
+  pageInfo: TaskPageInfo;
+}
+
+export interface UpdateTaskInput {
+  teamId: number;
+  taskId: number;
+  title?: string;
+  description?: string | null;
+  priority?: TaskPriority;
+  status?: TaskStatus;
+  assignedTo?: number | null;
+  deadline?: string | null;
 }

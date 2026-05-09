@@ -3,193 +3,169 @@ import type { FormEvent } from 'react';
 import { EmptyState } from '../../components/common/EmptyState';
 import { ErrorState } from '../../components/common/ErrorState';
 import { LoadingState } from '../../components/common/LoadingState';
-import { PaginationControls } from '../../components/common/PaginationControls';
 import { toApiError } from '../../lib/apiError';
-import type { TeamRole } from '../../types/team';
-import {
-  useCreateTeamMutation,
-  useCurrentTeam,
-  useInviteMemberMutation,
-  useTeamMembers,
-} from './hooks';
+import { useCreateTeamMutation, useDeleteTeamMutation, useTeamDetail, useTeams } from './hooks';
 
 export function TeamPage() {
-  const [teamName, setTeamName] = useState('');
-  const [teamDescription, setTeamDescription] = useState('');
-  const [memberName, setMemberName] = useState('');
-  const [memberEmail, setMemberEmail] = useState('');
-  const [memberRole, setMemberRole] = useState<TeamRole>('Member');
-  const [memberPage, setMemberPage] = useState(1);
+  const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
+  const [newTeamName, setNewTeamName] = useState('');
 
-  const teamQuery = useCurrentTeam();
+  const teamsQuery = useTeams();
   const createTeamMutation = useCreateTeamMutation();
-  const inviteMutation = useInviteMemberMutation();
-  const membersQuery = useTeamMembers({ page: memberPage, pageSize: 5 }, Boolean(teamQuery.data));
+  const deleteTeamMutation = useDeleteTeamMutation();
 
   const createTeamError = useMemo(
     () => (createTeamMutation.error ? toApiError(createTeamMutation.error).message : null),
     [createTeamMutation.error],
   );
-
-  const inviteError = useMemo(
-    () => (inviteMutation.error ? toApiError(inviteMutation.error).message : null),
-    [inviteMutation.error],
+  const deleteTeamError = useMemo(
+    () => (deleteTeamMutation.error ? toApiError(deleteTeamMutation.error).message : null),
+    [deleteTeamMutation.error],
   );
+
+  const selectedTeam = useMemo(() => {
+    if (!teamsQuery.data || teamsQuery.data.length === 0) {
+      return null;
+    }
+    if (selectedTeamId === null) {
+      return teamsQuery.data[0];
+    }
+    return teamsQuery.data.find((team) => team.id === selectedTeamId) ?? teamsQuery.data[0];
+  }, [teamsQuery.data, selectedTeamId]);
+  const teamDetailQuery = useTeamDetail(selectedTeam?.id ?? null);
 
   function handleCreateTeam(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!teamName.trim()) {
+    if (!newTeamName.trim()) {
       return;
     }
 
-    createTeamMutation.mutate({ name: teamName.trim(), description: teamDescription.trim() || undefined });
-  }
-
-  function handleInvite(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!memberName.trim() || !memberEmail.trim()) {
-      return;
-    }
-
-    inviteMutation.mutate(
+    createTeamMutation.mutate(
+      { name: newTeamName.trim() },
       {
-        name: memberName.trim(),
-        email: memberEmail.trim(),
-        role: memberRole,
-      },
-      {
-        onSuccess: () => {
-          setMemberName('');
-          setMemberEmail('');
-          setMemberRole('Member');
+        onSuccess: (team) => {
+          setNewTeamName('');
+          setSelectedTeamId(team.id);
         },
       },
     );
   }
 
-  if (teamQuery.isLoading) {
-    return <LoadingState message="Loading team details..." />;
+  function handleDeleteTeam() {
+    if (!selectedTeam) {
+      return;
+    }
+    deleteTeamMutation.mutate(selectedTeam.id, {
+      onSuccess: () => {
+        setSelectedTeamId(null);
+      },
+    });
   }
 
-  if (teamQuery.error) {
-    return <ErrorState error={teamQuery.error} title="Could not load team" />;
+  if (teamsQuery.isLoading) {
+    return <LoadingState message="Loading your teams..." />;
+  }
+
+  if (teamsQuery.error) {
+    return <ErrorState error={teamsQuery.error} title="Could not load teams" />;
   }
 
   return (
     <div className="space-y-6">
       <header>
-        <h2 className="text-xl font-semibold text-slate-900">Team Dashboard</h2>
-        <p className="mt-1 text-sm text-slate-600">Create your team, invite members, and manage roles.</p>
+        <h2 className="text-xl font-semibold text-slate-900">Team Management</h2>
+        <p className="mt-1 text-sm text-slate-600">Create teams, view list/details, and delete teams.</p>
       </header>
 
-      {!teamQuery.data ? (
+      <section className="rounded-lg border border-slate-200 bg-white p-4">
+        <h3 className="text-base font-semibold text-slate-900">Add Team</h3>
+        <form className="mt-4 flex flex-wrap items-center gap-3" onSubmit={handleCreateTeam}>
+          {createTeamError ? <p className="w-full text-sm text-red-700">{createTeamError}</p> : null}
+          <input
+            className="w-full max-w-md rounded-md border border-slate-300 px-3 py-2 text-sm"
+            placeholder="Team name"
+            value={newTeamName}
+            onChange={(event) => setNewTeamName(event.target.value)}
+          />
+          <button
+            type="submit"
+            className="rounded-md bg-slate-900 px-3 py-2 text-sm font-semibold text-white disabled:opacity-60"
+            disabled={createTeamMutation.isPending}
+          >
+            {createTeamMutation.isPending ? 'Saving...' : 'Save Team'}
+          </button>
+        </form>
+      </section>
+
+      {!teamsQuery.data || teamsQuery.data.length === 0 ? (
         <section className="rounded-lg border border-slate-200 bg-white p-4">
-          <h3 className="text-base font-semibold text-slate-900">Create Team</h3>
-          <p className="mt-1 text-sm text-slate-600">Start by creating a team workspace.</p>
-          <form className="mt-4 grid gap-3" onSubmit={handleCreateTeam}>
-            {createTeamError ? <p className="text-sm text-red-700">{createTeamError}</p> : null}
-            <input
-              className="rounded-md border border-slate-300 px-3 py-2 text-sm"
-              placeholder="Team name"
-              value={teamName}
-              onChange={(event) => setTeamName(event.target.value)}
-            />
-            <textarea
-              className="rounded-md border border-slate-300 px-3 py-2 text-sm"
-              placeholder="Team description (optional)"
-              rows={3}
-              value={teamDescription}
-              onChange={(event) => setTeamDescription(event.target.value)}
-            />
-            <button
-              type="submit"
-              className="w-fit rounded-md bg-slate-900 px-3 py-2 text-sm font-semibold text-white disabled:opacity-60"
-              disabled={createTeamMutation.isPending}
-            >
-              {createTeamMutation.isPending ? 'Creating...' : 'Create Team'}
-            </button>
-          </form>
+          <EmptyState title="No teams found" description="Create a team using the form above." />
         </section>
       ) : (
-        <>
-          <section className="rounded-lg border border-slate-200 bg-white p-4">
-            <h3 className="text-base font-semibold text-slate-900">{teamQuery.data.name}</h3>
-            <p className="mt-1 text-sm text-slate-600">
-              {teamQuery.data.description || 'No team description provided.'}
-            </p>
-          </section>
+        <section className="grid gap-6 lg:grid-cols-3">
+          <div className="rounded-lg border border-slate-200 bg-white p-4 lg:col-span-1">
+            <h3 className="text-base font-semibold text-slate-900">Team List</h3>
+            <ul className="mt-4 space-y-2">
+              {teamsQuery.data.map((team) => {
+                const isSelected = selectedTeam?.id === team.id;
+                return (
+                  <li key={team.id}>
+                    <button
+                      type="button"
+                      className={`w-full rounded-md border px-3 py-2 text-left text-sm transition ${
+                        isSelected
+                          ? 'border-slate-900 bg-slate-900 text-white'
+                          : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                      }`}
+                      onClick={() => setSelectedTeamId(team.id)}
+                    >
+                      <p className="font-medium">{team.name}</p>
+                      <p className={`text-xs ${isSelected ? 'text-slate-200' : 'text-slate-500'}`}>ID: {team.id}</p>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
 
-          <section className="grid gap-6 lg:grid-cols-2">
+          <div className="space-y-6 lg:col-span-2">
             <div className="rounded-lg border border-slate-200 bg-white p-4">
-              <h3 className="text-base font-semibold text-slate-900">Invite Member</h3>
-              <form className="mt-4 grid gap-3" onSubmit={handleInvite}>
-                {inviteError ? <p className="text-sm text-red-700">{inviteError}</p> : null}
-                <input
-                  className="rounded-md border border-slate-300 px-3 py-2 text-sm"
-                  placeholder="Full name"
-                  value={memberName}
-                  onChange={(event) => setMemberName(event.target.value)}
-                />
-                <input
-                  className="rounded-md border border-slate-300 px-3 py-2 text-sm"
-                  placeholder="Email"
-                  value={memberEmail}
-                  onChange={(event) => setMemberEmail(event.target.value)}
-                  type="email"
-                />
-                <select
-                  className="rounded-md border border-slate-300 px-3 py-2 text-sm"
-                  value={memberRole}
-                  onChange={(event) => setMemberRole(event.target.value as TeamRole)}
-                >
-                  <option value="Member">Member</option>
-                  <option value="Admin">Admin</option>
-                </select>
-                <button
-                  type="submit"
-                  className="w-fit rounded-md bg-slate-900 px-3 py-2 text-sm font-semibold text-white disabled:opacity-60"
-                  disabled={inviteMutation.isPending}
-                >
-                  {inviteMutation.isPending ? 'Inviting...' : 'Send Invite'}
-                </button>
-              </form>
+              <h3 className="text-base font-semibold text-slate-900">Team Details</h3>
+              {selectedTeam ? (
+                <div className="mt-3 text-sm text-slate-700">
+                  {teamDetailQuery.error ? (
+                    <p className="mb-2 text-sm text-red-700">
+                      {toApiError(teamDetailQuery.error).message}
+                    </p>
+                  ) : null}
+                  <p>
+                    <span className="font-medium">Name:</span> {teamDetailQuery.data?.name ?? selectedTeam.name}
+                  </p>
+                  <p className="mt-1">
+                    <span className="font-medium">Team ID:</span> {selectedTeam.id}
+                  </p>
+                  {teamDetailQuery.data?.createdAt ? (
+                    <p className="mt-1">
+                      <span className="font-medium">Created:</span>{' '}
+                      {new Date(teamDetailQuery.data.createdAt).toLocaleDateString()}
+                    </p>
+                  ) : null}
+                  {deleteTeamError ? <p className="mt-3 text-sm text-red-700">{deleteTeamError}</p> : null}
+                  <button
+                    type="button"
+                    className="mt-4 rounded-md border border-red-300 px-3 py-2 text-sm font-semibold text-red-700 disabled:opacity-60"
+                    onClick={handleDeleteTeam}
+                    disabled={deleteTeamMutation.isPending}
+                  >
+                    {deleteTeamMutation.isPending ? 'Deleting...' : 'Delete Team'}
+                  </button>
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-slate-500">Select a team to see details.</p>
+              )}
             </div>
-
-            <div className="rounded-lg border border-slate-200 bg-white p-4">
-              <h3 className="text-base font-semibold text-slate-900">Members</h3>
-
-              {membersQuery.isLoading ? <LoadingState message="Loading members..." /> : null}
-              {membersQuery.error ? <ErrorState error={membersQuery.error} title="Could not load members" /> : null}
-
-              {membersQuery.data && membersQuery.data.items.length > 0 ? (
-                <>
-                  <ul className="mt-4 divide-y divide-slate-200">
-                    {membersQuery.data.items.map((member) => (
-                      <li key={member.id} className="flex items-center justify-between py-3">
-                        <div>
-                          <p className="text-sm font-medium text-slate-900">{member.name}</p>
-                          <p className="text-sm text-slate-500">{member.email}</p>
-                        </div>
-                        <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">
-                          {member.role}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                  <PaginationControls
-                    page={membersQuery.data.page}
-                    totalPages={membersQuery.data.totalPages}
-                    onPageChange={setMemberPage}
-                  />
-                </>
-              ) : null}
-
-              {membersQuery.data && membersQuery.data.items.length === 0 ? (
-                <EmptyState title="No team members yet" description="Invite teammates to collaborate." />
-              ) : null}
-            </div>
-          </section>
-        </>
+          </div>
+        </section>
       )}
     </div>
   );

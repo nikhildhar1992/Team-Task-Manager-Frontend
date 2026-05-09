@@ -3,41 +3,48 @@ import type { FormEvent } from 'react';
 import { EmptyState } from '../../components/common/EmptyState';
 import { ErrorState } from '../../components/common/ErrorState';
 import { LoadingState } from '../../components/common/LoadingState';
-import { PaginationControls } from '../../components/common/PaginationControls';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { toApiError } from '../../lib/apiError';
 import type { TaskPriority, TaskStatus } from '../../types/task';
-import { useTeamMembers } from '../team/hooks';
-import {
-  useAssignTaskMutation,
-  useCreateTaskMutation,
-  useTasks,
-  useUpdateTaskStatusMutation,
-} from './hooks';
+import { useAuth } from '../auth/useAuth';
+import { useTeams } from '../team/hooks';
+import { useCreateTaskMutation, useDeleteTaskMutation, useTasks, useUpdateTaskMutation } from './hooks';
 
-const statusOptions: TaskStatus[] = ['Todo', 'In Progress', 'Done'];
-const priorityOptions: TaskPriority[] = ['Low', 'Medium', 'High'];
+const statusOptions: Array<{ value: TaskStatus; label: string }> = [
+  { value: 'todo', label: 'Todo' },
+  { value: 'in_progress', label: 'In Progress' },
+  { value: 'done', label: 'Done' },
+];
+const priorityOptions: Array<{ value: TaskPriority; label: string }> = [
+  { value: 'low', label: 'Low' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'high', label: 'High' },
+];
 
 export function TasksPage() {
-  const [page, setPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState<TaskStatus | 'All'>('All');
+  const { session } = useAuth();
+  const teamsQuery = useTeams();
+  const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [assigneeId, setAssigneeId] = useState('');
-  const [status, setStatus] = useState<TaskStatus>('Todo');
-  const [priority, setPriority] = useState<TaskPriority>('Medium');
-  const [dueDate, setDueDate] = useState('');
+  const [status, setStatus] = useState<TaskStatus>('todo');
+  const [priority, setPriority] = useState<TaskPriority>('medium');
+  const [deadline, setDeadline] = useState('');
 
-  const tasksQuery = useTasks({
-    page,
-    pageSize: 8,
-    status: statusFilter === 'All' ? undefined : statusFilter,
-  });
-  const membersQuery = useTeamMembers({ page: 1, pageSize: 100 });
+  const selectedTeam = useMemo(() => {
+    if (!teamsQuery.data || teamsQuery.data.length === 0) {
+      return null;
+    }
+    if (selectedTeamId === null) {
+      return teamsQuery.data[0];
+    }
+    return teamsQuery.data.find((team) => team.id === selectedTeamId) ?? teamsQuery.data[0];
+  }, [teamsQuery.data, selectedTeamId]);
 
+  const tasksQuery = useTasks(selectedTeam?.id ?? null);
   const createTaskMutation = useCreateTaskMutation();
-  const assignTaskMutation = useAssignTaskMutation();
-  const updateStatusMutation = useUpdateTaskStatusMutation();
+  const updateTaskMutation = useUpdateTaskMutation();
+  const deleteTaskMutation = useDeleteTaskMutation();
 
   const createTaskError = useMemo(
     () => (createTaskMutation.error ? toApiError(createTaskMutation.error).message : null),
@@ -46,31 +53,43 @@ export function TasksPage() {
 
   function handleCreateTask(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!title.trim()) {
+    if (!title.trim() || !selectedTeam) {
       return;
     }
+    const loginUserId = Number(session?.user?.id);
 
     createTaskMutation.mutate(
       {
+        teamId: selectedTeam.id,
         title: title.trim(),
         description: description.trim() || undefined,
-        assigneeId: assigneeId || undefined,
+        assignedTo: Number.isFinite(loginUserId) ? loginUserId : undefined,
         status,
         priority,
-        dueDate: dueDate || undefined,
+        deadline: deadline || undefined,
       },
       {
         onSuccess: () => {
           setTitle('');
           setDescription('');
-          setAssigneeId('');
-          setStatus('Todo');
-          setPriority('Medium');
-          setDueDate('');
-          setPage(1);
+          setStatus('todo');
+          setPriority('medium');
+          setDeadline('');
         },
       },
     );
+  }
+
+  if (teamsQuery.isLoading) {
+    return <LoadingState message="Loading teams..." />;
+  }
+
+  if (teamsQuery.error) {
+    return <ErrorState error={teamsQuery.error} title="Could not load teams for tasks" />;
+  }
+
+  if (!selectedTeam) {
+    return <EmptyState title="No team found" description="Join a team first to manage tasks." />;
   }
 
   return (
@@ -79,24 +98,22 @@ export function TasksPage() {
         <div>
           <h2 className="text-xl font-semibold text-slate-900">Task Management</h2>
           <p className="mt-1 text-sm text-slate-600">
-            Create tasks, assign owners, and track progress with status updates.
+            Team-scoped tasks aligned with backend APIs.
           </p>
         </div>
 
         <label className="text-sm">
-          <span className="mb-1 block text-slate-600">Filter status</span>
+          <span className="mb-1 block text-slate-600">Team</span>
           <select
-            value={statusFilter}
+            value={selectedTeam.id}
             onChange={(event) => {
-              setStatusFilter(event.target.value as TaskStatus | 'All');
-              setPage(1);
+              setSelectedTeamId(Number(event.target.value));
             }}
             className="rounded-md border border-slate-300 px-3 py-2"
           >
-            <option value="All">All</option>
-            {statusOptions.map((item) => (
-              <option key={item} value={item}>
-                {item}
+            {teamsQuery.data?.map((team) => (
+              <option key={team.id} value={team.id}>
+                {team.name}
               </option>
             ))}
           </select>
@@ -116,8 +133,8 @@ export function TasksPage() {
           <input
             className="rounded-md border border-slate-300 px-3 py-2 text-sm"
             type="date"
-            value={dueDate}
-            onChange={(event) => setDueDate(event.target.value)}
+            value={deadline}
+            onChange={(event) => setDeadline(event.target.value)}
           />
           <textarea
             className="rounded-md border border-slate-300 px-3 py-2 text-sm md:col-span-2"
@@ -128,24 +145,12 @@ export function TasksPage() {
           />
           <select
             className="rounded-md border border-slate-300 px-3 py-2 text-sm"
-            value={assigneeId}
-            onChange={(event) => setAssigneeId(event.target.value)}
-          >
-            <option value="">Unassigned</option>
-            {membersQuery.data?.items.map((member) => (
-              <option key={member.id} value={member.id}>
-                {member.name}
-              </option>
-            ))}
-          </select>
-          <select
-            className="rounded-md border border-slate-300 px-3 py-2 text-sm"
             value={status}
             onChange={(event) => setStatus(event.target.value as TaskStatus)}
           >
             {statusOptions.map((item) => (
-              <option key={item} value={item}>
-                {item}
+              <option key={item.value} value={item.value}>
+                {item.label}
               </option>
             ))}
           </select>
@@ -155,8 +160,8 @@ export function TasksPage() {
             onChange={(event) => setPriority(event.target.value as TaskPriority)}
           >
             {priorityOptions.map((item) => (
-              <option key={item} value={item}>
-                {item}
+              <option key={item.value} value={item.value}>
+                {item.label}
               </option>
             ))}
           </select>
@@ -189,6 +194,7 @@ export function TasksPage() {
                     <th className="px-2 py-2">Priority</th>
                     <th className="px-2 py-2">Assignee</th>
                     <th className="px-2 py-2">Due</th>
+                    <th className="px-2 py-2">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -206,50 +212,42 @@ export function TasksPage() {
                           className="rounded-md border border-slate-300 px-2 py-1"
                           value={task.status}
                           onChange={(event) =>
-                            updateStatusMutation.mutate({
+                            updateTaskMutation.mutate({
+                              teamId: selectedTeam.id,
                               taskId: task.id,
                               status: event.target.value as TaskStatus,
                             })
                           }
                         >
                           {statusOptions.map((item) => (
-                            <option key={item} value={item}>
-                              {item}
+                            <option key={item.value} value={item.value}>
+                              {item.label}
                             </option>
                           ))}
                         </select>
                       </td>
-                      <td className="px-2 py-2 text-slate-700">{task.priority}</td>
+                      <td className="px-2 py-2 text-slate-700">
+                        {priorityOptions.find((option) => option.value === task.priority)?.label ?? task.priority}
+                      </td>
                       <td className="px-2 py-2">
-                        <select
-                          className="rounded-md border border-slate-300 px-2 py-1"
-                          value={task.assigneeId ?? ''}
-                          onChange={(event) =>
-                            assignTaskMutation.mutate({
-                              taskId: task.id,
-                              assigneeId: event.target.value || undefined,
-                            })
-                          }
-                        >
-                          <option value="">Unassigned</option>
-                          {membersQuery.data?.items.map((member) => (
-                            <option key={member.id} value={member.id}>
-                              {member.name}
-                            </option>
-                          ))}
-                        </select>
+                        {task.assignedTo ? `User ${task.assignedTo}` : 'Unassigned'}
                       </td>
-                      <td className="px-2 py-2 text-slate-700">{task.dueDate || '-'}</td>
+                      <td className="px-2 py-2 text-slate-700">{task.deadline || '-'}</td>
+                      <td className="px-2 py-2">
+                        <button
+                          type="button"
+                          className="rounded-md border border-red-300 px-2 py-1 text-xs text-red-700 hover:bg-red-50"
+                          onClick={() => deleteTaskMutation.mutate({ teamId: selectedTeam.id, taskId: task.id })}
+                          disabled={deleteTaskMutation.isPending}
+                        >
+                          Delete
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <PaginationControls
-              page={tasksQuery.data.page}
-              totalPages={tasksQuery.data.totalPages}
-              onPageChange={setPage}
-            />
           </>
         ) : null}
 

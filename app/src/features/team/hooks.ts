@@ -1,11 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createTeam, getCurrentTeam, getTeamMembers, inviteMember } from './api';
-import type { PaginationParams } from '../../types/api';
+import { createTeam, deleteTeam, getTeamById, getTeams } from './api';
 
-export function useCurrentTeam() {
+export function useTeams() {
   return useQuery({
-    queryKey: ['team', 'current'],
-    queryFn: getCurrentTeam,
+    queryKey: ['teams'],
+    queryFn: getTeams,
   });
 }
 
@@ -15,27 +14,26 @@ export function useCreateTeamMutation() {
   return useMutation({
     mutationFn: createTeam,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['team'] });
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
     },
   });
 }
 
-export function useInviteMemberMutation() {
+export function useDeleteTeamMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: inviteMember,
+    mutationFn: deleteTeam,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['team', 'members'] });
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
     },
   });
 }
 
-export function useTeamMembers(params: PaginationParams, enabled = true) {
+export function useTeamDetail(teamId: number | null) {
   return useQuery({
-    queryKey: ['team', 'members', params],
-    queryFn: () => getTeamMembers(params),
-    enabled,
-    placeholderData: (previousData) => previousData,
+    queryKey: ['teams', teamId, 'detail'],
+    queryFn: () => getTeamById(teamId as number),
+    enabled: typeof teamId === 'number' && teamId > 0,
   });
 }

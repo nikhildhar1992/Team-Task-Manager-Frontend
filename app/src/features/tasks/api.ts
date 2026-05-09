@@ -1,33 +1,34 @@
 import { httpClient } from '../../lib/httpClient';
-import type { PaginatedResponse } from '../../types/api';
-import type {
-  AssignTaskInput,
-  CreateTaskInput,
-  Task,
-  TaskListParams,
-  UpdateTaskStatusInput,
-} from '../../types/task';
+import type { CreateTaskInput, Task, TaskListResult, UpdateTaskInput } from '../../types/task';
 
-export async function getTasks(params: TaskListParams): Promise<PaginatedResponse<Task>> {
-  const response = await httpClient.get<PaginatedResponse<Task>>('/tasks', { params });
-  return response.data;
+interface ApiSuccessResponse<T> {
+  success: true;
+  data: T;
+}
+
+interface ApiMessageResponse {
+  success: true;
+  message: string;
+}
+
+export async function getTasks(teamId: number): Promise<TaskListResult> {
+  const response = await httpClient.get<ApiSuccessResponse<TaskListResult>>(`/teams/${teamId}/tasks`);
+  return response.data.data;
 }
 
 export async function createTask(input: CreateTaskInput): Promise<Task> {
-  const response = await httpClient.post<Task>('/tasks', input);
-  return response.data;
+  const { teamId, ...body } = input;
+  const response = await httpClient.post<ApiSuccessResponse<Task>>(`/teams/${teamId}/tasks`, body);
+  return response.data.data;
 }
 
-export async function assignTask(input: AssignTaskInput): Promise<Task> {
-  const response = await httpClient.patch<Task>(`/tasks/${input.taskId}/assign`, {
-    assigneeId: input.assigneeId,
-  });
-  return response.data;
+export async function updateTask(input: UpdateTaskInput): Promise<Task> {
+  const { teamId, taskId, ...body } = input;
+  const response = await httpClient.patch<ApiSuccessResponse<Task>>(`/teams/${teamId}/tasks/${taskId}`, body);
+  return response.data.data;
 }
 
-export async function updateTaskStatus(input: UpdateTaskStatusInput): Promise<Task> {
-  const response = await httpClient.patch<Task>(`/tasks/${input.taskId}/status`, {
-    status: input.status,
-  });
-  return response.data;
+export async function deleteTask(teamId: number, taskId: number): Promise<string> {
+  const response = await httpClient.delete<ApiMessageResponse>(`/teams/${teamId}/tasks/${taskId}`);
+  return response.data.message;
 }

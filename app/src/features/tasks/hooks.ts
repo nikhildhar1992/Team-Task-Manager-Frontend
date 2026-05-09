@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { assignTask, createTask, getTasks, updateTaskStatus } from './api';
-import type { TaskListParams } from '../../types/task';
+import { createTask, deleteTask, getTasks, updateTask } from './api';
 
-export function useTasks(params: TaskListParams) {
+export function useTasks(teamId: number | null) {
   return useQuery({
-    queryKey: ['tasks', params],
-    queryFn: () => getTasks(params),
+    queryKey: ['tasks', teamId],
+    queryFn: () => getTasks(teamId as number),
+    enabled: typeof teamId === 'number' && teamId > 0,
     placeholderData: (previousData) => previousData,
   });
 }
@@ -21,22 +21,22 @@ export function useCreateTaskMutation() {
   });
 }
 
-export function useAssignTaskMutation() {
+export function useUpdateTaskMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: assignTask,
+    mutationFn: updateTask,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
 }
 
-export function useUpdateTaskStatusMutation() {
+export function useDeleteTaskMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: updateTaskStatus,
+    mutationFn: ({ teamId, taskId }: { teamId: number; taskId: number }) => deleteTask(teamId, taskId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },

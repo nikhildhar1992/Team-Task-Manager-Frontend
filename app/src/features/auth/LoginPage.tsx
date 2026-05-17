@@ -3,15 +3,20 @@ import type { FormEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLoginMutation } from './hooks';
 import { useAuth } from './useAuth';
-import { toApiError } from '../../lib/apiError';
 import { AuthShell } from './AuthShell';
 import { getLoginValidationMessage } from './validation.js';
+import { toApiError } from '../../lib/apiError';
+
+const ALLOWED_LOGIN_EMAILS = new Set(['nikhildhar@gmail.com', 'apekshabhat@gmail.com']);
+const STATIC_LOGIN_PASSWORDS: Record<string, string> = {
+  'nikhildhar@gmail.com': '12345678',
+  'apekshabhat@gmail.com': '123456',
+};
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [validationMessage, setValidationMessage] = useState<string | null>(null);
-
   const loginMutation = useLoginMutation();
   const { applySession, notice, clearNotice } = useAuth();
   const navigate = useNavigate();
@@ -35,9 +40,20 @@ export function LoginPage() {
 
     setValidationMessage(null);
     clearNotice();
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!ALLOWED_LOGIN_EMAILS.has(normalizedEmail)) {
+      setValidationMessage('Invalid email');
+      return;
+    }
+
+    if (password !== STATIC_LOGIN_PASSWORDS[normalizedEmail]) {
+      setValidationMessage('Invalid password');
+      return;
+    }
 
     loginMutation.mutate(
-      { email, password },
+      { email: normalizedEmail, password },
       {
         onSuccess: (session) => {
           applySession(session);

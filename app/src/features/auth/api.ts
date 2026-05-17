@@ -55,6 +55,6 @@ export async function loginRequest(input: LoginInput): Promise<AuthSession> {
 }
 
 export async function signupRequest(input: SignupInput): Promise<AuthSession> {
-  const response = await httpClient.post('/auth/signup', input);
+  const response = await httpClient.post('/auth/register', input);
   return normalizeAuthSession(response.data);
 }

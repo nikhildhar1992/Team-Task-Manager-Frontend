@@ -1,6 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
-import { requestSmartTaskBreakdown } from './api';
+import { ingestKnowledge, requestSmartAssistantOrchestration } from './api';
 
 export function useSmartAssistantMutation() {
-  return useMutation({ mutationFn: requestSmartTaskBreakdown });
+  return useMutation({ mutationFn: requestSmartAssistantOrchestration });
+}
+
+export function useKnowledgeIngestMutation() {
+  return useMutation({ mutationFn: ingestKnowledge });
 }

@@ -4,7 +4,7 @@ import { clearSession, getSession, setAuthNotice } from './session';
 export const SESSION_EXPIRED_EVENT = 'auth:session-expired';
 // http://16.16.192.94:3000
 export const httpClient = axios.create({
-  baseURL: 'http://13.234.78.121:3000/api/v1',
+  baseURL: 'https://api.koshurwaan.in/api/v1',
   timeout: 15000,
 });
 

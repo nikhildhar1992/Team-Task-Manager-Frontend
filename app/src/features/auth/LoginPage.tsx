@@ -14,8 +14,8 @@ const STATIC_LOGIN_PASSWORDS: Record<string, string> = {
 };
 
 export function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('nikhildhar@gmail.com');
+  const [password, setPassword] = useState('12345678');
   const [validationMessage, setValidationMessage] = useState<string | null>(null);
   const loginMutation = useLoginMutation();
   const { applySession, notice, clearNotice } = useAuth();

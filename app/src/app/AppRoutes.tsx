@@ -5,6 +5,7 @@ import { ProtectedRoute } from '../features/auth/ProtectedRoute';
 import { PublicOnlyRoute } from '../features/auth/PublicOnlyRoute';
 import { AppLayout } from './AppLayout';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
+import { JobSearchPage } from '../features/job-search/JobSearchPage';
 import { TeamPage } from '../features/team/TeamPage';
 import { TasksPage } from '../features/tasks/TasksPage';
 import { SmartAssistantPage } from '../features/ai/SmartAssistantPage';
@@ -27,6 +28,7 @@ export function AppRoutes() {
         <Route element={<AppLayout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/job-search" element={<JobSearchPage />} />
           <Route path="/teams" element={<TeamPage />} />
           <Route path="/tasks" element={<TasksPage />} />
           <Route path="/ai-assistant" element={<SmartAssistantPage />} />

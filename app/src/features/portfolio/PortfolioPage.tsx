@@ -95,8 +95,8 @@ const POCS = [
     title: 'AI-Powered Team Task Platform',
     tagline: 'RAG · RBAC · Agentic AI · Orchestrator · CI/CD Agent · AWS',
     description:
-      'End-to-end production POC combining RAG-based knowledge retrieval, RBAC-secured multi-team task management, and an AI orchestrator that auto-routes prompts to specialised agents (general, task-breakdown, operations). Also includes an autonomous CI/CD agent built with GitHub Actions, Cursor API, and Notion integrations — fully deployed on AWS.',
-    stack: ['RAG', 'Vector Embeddings', 'Agentic AI', 'Orchestrator', 'RBAC', 'Node.js', 'React', 'Docker', 'AWS', 'OpenAI API', 'GitHub Actions', 'Cursor API', 'Notion API'],
+      'End-to-end production POC combining RAG-based knowledge retrieval, RBAC-secured multi-team task management, and an AI orchestrator that auto-routes prompts to specialised agents (general, task-breakdown, operations). Also includes an autonomous CI/CD agent built with GitHub Actions, Cursor API, and Notion integrations — with frontend deployed on AWS Amplify and serverless workflows on AWS Lambda.',
+    stack: ['RAG', 'Vector Embeddings', 'Agentic AI', 'Orchestrator', 'RBAC', 'Node.js', 'React', 'Docker', 'AWS Amplify', 'AWS Lambda', 'OpenAI API', 'GitHub Actions', 'Cursor API', 'Notion API'],
     url: 'https://koshurwaan.in',
     urlLabel: 'koshurwaan.in',
     accent: 'blue',
@@ -105,8 +105,8 @@ const POCS = [
     title: 'Multi-Portal Job Search Agent',
     tagline: 'Azure · React PWA · Playwright · Whisper · Job APIs',
     description:
-      'A Resume-aware PWA that aggregates live job listings from Playwright-scraped portals (NaukriGulf, GulfTalent) and API-based job boards (Greenhouse, Lever, Ashby, Workable). Uses GPT-4o-mini to generate structured search criteria from your resume profile, OpenAI Whisper for voice-to-search (auto-fills country/platform dropdowns and triggers search automatically), and ranks results with a match-scoring engine. Features seen-job deduplication across sources and runs on Azure Cloud.',
-    stack: ['GPT-4o-mini', 'Multi-source aggregation', 'Match scoring', 'Resume-aware AI', 'Fastify'],
+      'A Resume-aware PWA that aggregates live job listings from Playwright-scraped portals (NaukriGulf, GulfTalent) and API-based job boards (Greenhouse, Lever, Ashby, Workable). Uses GPT-4o-mini to generate structured search criteria from your resume profile, OpenAI Whisper for voice-to-search (auto-fills country/platform dropdowns and triggers search automatically), and ranks results with a match-scoring engine. Features seen-job deduplication across sources, with backend services on Azure Cloud and frontend deployed through AWS Amplify.',
+    stack: ['GPT-4o-mini', 'Multi-source aggregation', 'Match scoring', 'Resume-aware AI', 'Fastify', 'Azure Cloud', 'AWS Amplify'],
     url: 'https://jobsearchagent.koshurwaan.in',
     urlLabel: 'jobsearchagent.koshurwaan.in',
     accent: 'violet',

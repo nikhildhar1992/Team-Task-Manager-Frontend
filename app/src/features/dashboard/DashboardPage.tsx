@@ -34,7 +34,7 @@ const PRODUCTS: Product[] = [
     price: 180,
     unit: 'per 100g',
     description: 'Thin-skinned, sweet Kashmir valley almonds. Perfect for gifting and cooking.',
-    emoji: '🌰',
+    emoji: '🫒',
   },
   {
     id: 'walnuts',
@@ -43,7 +43,7 @@ const PRODUCTS: Product[] = [
     price: 120,
     unit: 'per 100g',
     description: 'Papershell walnuts from the walnut groves of Shopian. Light, crisp, and full-flavoured.',
-    emoji: '🥜',
+    emoji: '🌰',
     badge: 'Farm Fresh',
   },
   {
@@ -53,7 +53,7 @@ const PRODUCTS: Product[] = [
     price: 90,
     unit: 'per 100g',
     description: 'Sun-dried green raisins from Kashmir. Naturally sweet with no added sugar.',
-    emoji: '🍇',
+    emoji: '🫐',
   },
   {
     id: 'rajma',

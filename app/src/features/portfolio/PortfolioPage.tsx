@@ -120,6 +120,39 @@ const AI_HIGHLIGHTS = [
   'Deployed full-stack applications on AWS using Amplify, EC2, and Lambda.',
 ];
 
+const BOLD_KEYWORDS = [
+  'Redis', 'JWT', 'RBAC', 'Docker', 'AWS', 'Node.js', 'TypeScript', 'React', 'Angular',
+  'Stripe', 'Apple Pay', 'Google Pay', 'Twilio', 'QuickBooks',
+  'OpenAI', 'Gemini', 'RAG', 'Vector Embeddings', 'Semantic Search', 'Prompt Engineering',
+  'GitHub Actions', 'Cursor API', 'Notion API',
+  'Microservices', 'BullMQ', 'MySQL',
+  '60%', '25+', '20+',
+  'Associate Product Manager',
+  'High Achiever Award',
+  'fintech', 'healthcare', 'SaaS',
+];
+
+function HighlightText({ text }: { text: string }) {
+  const pattern = new RegExp(
+    `(${BOLD_KEYWORDS.map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`,
+    'g',
+  );
+  const parts = text.split(pattern);
+  return (
+    <span>
+      {parts.map((part, i) =>
+        BOLD_KEYWORDS.includes(part) ? (
+          <strong key={i} className="font-semibold text-slate-800">
+            {part}
+          </strong>
+        ) : (
+          part
+        ),
+      )}
+    </span>
+  );
+}
+
 function Tag({ label }: { label: string }) {
   return (
     <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700">
@@ -173,7 +206,7 @@ export function PortfolioPage() {
           {[
             { value: '9+', label: 'Years Experience' },
             { value: '25+', label: 'Engineers Led' },
-            { value: '60%', label: 'API Perf Gain' },
+            { value: '60%', label: 'Faster APIs' },
             { value: 'APM', label: 'Dual Role' },
           ].map((stat) => (
             <div key={stat.label} className="rounded-xl bg-white/10 px-4 py-3 text-center">
@@ -188,12 +221,7 @@ export function PortfolioPage() {
       <section>
         <SectionHeading>Professional Summary</SectionHeading>
         <p className="text-sm leading-relaxed text-slate-600">
-          Lead Full Stack Engineer with 9+ years of experience architecting and delivering scalable fintech, SaaS, and
-          healthcare solutions. Expertise in Node.js, TypeScript, React, Angular, AWS, Redis, distributed systems, cloud
-          architecture, payment integrations, and AI-powered applications. Proven track record leading teams of 20+
-          engineers, driving technical roadmaps, engineering strategy, platform scalability, and delivering
-          business-critical products. Recently promoted to Associate Product Manager, bringing a strong blend of
-          engineering leadership, product thinking, and customer-focused innovation.
+          <HighlightText text="Lead Full Stack Engineer with 9+ years of experience architecting and delivering scalable fintech, SaaS, and healthcare solutions. Expertise in Node.js, TypeScript, React, Angular, AWS, Redis, distributed systems, cloud architecture, payment integrations, and AI-powered applications. Proven track record leading teams of 20+ engineers, driving technical roadmaps, engineering strategy, platform scalability, and delivering business-critical products. Recently promoted to Associate Product Manager, bringing a strong blend of engineering leadership, product thinking, and customer-focused innovation." />
         </p>
       </section>
 
@@ -291,7 +319,7 @@ export function PortfolioPage() {
                 {job.highlights.map((item) => (
                   <li key={item} className="flex gap-2 text-sm text-slate-600">
                     <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
-                    {item}
+                    <HighlightText text={item} />
                   </li>
                 ))}
               </ul>
@@ -303,7 +331,7 @@ export function PortfolioPage() {
                     {job.integrations.map((item) => (
                       <li key={item} className="flex gap-2 text-sm text-slate-600">
                         <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400" />
-                        {item}
+                        <HighlightText text={item} />
                       </li>
                     ))}
                   </ul>
@@ -317,7 +345,7 @@ export function PortfolioPage() {
                     {job.achievements.map((item) => (
                       <li key={item} className="flex gap-2 text-sm text-slate-600">
                         <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
-                        {item}
+                        <HighlightText text={item} />
                       </li>
                     ))}
                   </ul>
@@ -336,7 +364,7 @@ export function PortfolioPage() {
             {AI_HIGHLIGHTS.map((item) => (
               <li key={item} className="flex gap-3 text-sm text-slate-700">
                 <span className="mt-0.5 text-blue-500 shrink-0">✦</span>
-                {item}
+                <HighlightText text={item} />
               </li>
             ))}
           </ul>

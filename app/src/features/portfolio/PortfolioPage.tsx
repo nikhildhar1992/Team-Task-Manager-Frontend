@@ -90,6 +90,29 @@ const EXPERIENCE = [
   },
 ];
 
+const POCS = [
+  {
+    title: 'AI-Powered Team Task Platform',
+    tagline: 'RAG · RBAC · Agentic AI · Orchestrator · CI/CD Agent · AWS',
+    description:
+      'End-to-end production POC combining RAG-based knowledge retrieval, RBAC-secured multi-team task management, and an AI orchestrator that auto-routes prompts to specialised agents (general, task-breakdown, operations). Also includes an autonomous CI/CD agent built with GitHub Actions, Cursor API, and Notion integrations — fully deployed on AWS.',
+    stack: ['RAG', 'Vector Embeddings', 'Agentic AI', 'Orchestrator', 'RBAC', 'Node.js', 'React', 'AWS', 'OpenAI API', 'GitHub Actions', 'Cursor API', 'Notion API'],
+    url: 'https://koshurwaan.in',
+    urlLabel: 'koshurwaan.in',
+    accent: 'blue',
+  },
+  {
+    title: 'Multi-Portal Job Search Agent',
+    tagline: 'Azure · React PWA · Playwright · Whisper · Job APIs',
+    description:
+      'A Progressive Web App that aggregates live job listings by scraping multiple portals via Playwright and job-portal APIs, transcribes voice queries using OpenAI Whisper, and runs on Azure Cloud infrastructure.',
+    stack: ['React PWA', 'Playwright', 'Whisper (STT)', 'Job Portal APIs', 'Azure Cloud', 'TypeScript'],
+    url: 'https://jobsearchagent.koshurwaan.in',
+    urlLabel: 'jobsearchagent.koshurwaan.in',
+    accent: 'violet',
+  },
+];
+
 const AI_HIGHLIGHTS = [
   'Built AI-powered automation using OpenAI and Gemini APIs for financial assessment workflows.',
   'Developed autonomous CI/CD agents using GitHub Actions, Cursor API, and Notion integrations.',
@@ -172,6 +195,62 @@ export function PortfolioPage() {
           business-critical products. Recently promoted to Associate Product Manager, bringing a strong blend of
           engineering leadership, product thinking, and customer-focused innovation.
         </p>
+      </section>
+
+      {/* POCs */}
+      <section>
+        <SectionHeading>Proof of Concepts</SectionHeading>
+        <div className="grid gap-6 sm:grid-cols-2">
+          {POCS.map((poc) => {
+            const isBluePoc = poc.accent === 'blue';
+            return (
+              <div
+                key={poc.title}
+                className={`flex flex-col rounded-2xl border p-5 shadow-sm ${
+                  isBluePoc
+                    ? 'border-blue-100 bg-gradient-to-br from-blue-50 to-slate-50'
+                    : 'border-violet-100 bg-gradient-to-br from-violet-50 to-slate-50'
+                }`}
+              >
+                <div className="flex-1">
+                  <p
+                    className={`text-xs font-semibold uppercase tracking-wider mb-1 ${
+                      isBluePoc ? 'text-blue-500' : 'text-violet-500'
+                    }`}
+                  >
+                    {poc.tagline}
+                  </p>
+                  <h3 className="text-sm font-bold text-slate-900">{poc.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-600">{poc.description}</p>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {poc.stack.map((tag) => (
+                      <span
+                        key={tag}
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          isBluePoc
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'bg-violet-100 text-violet-700'
+                        }`}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <a
+                  href={poc.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`mt-4 inline-flex items-center gap-1.5 self-start rounded-lg px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 ${
+                    isBluePoc ? 'bg-blue-600' : 'bg-violet-600'
+                  }`}
+                >
+                  {poc.urlLabel} ↗
+                </a>
+              </div>
+            );
+          })}
+        </div>
       </section>
 
       {/* Skills */}

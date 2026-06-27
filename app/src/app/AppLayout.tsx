@@ -4,8 +4,7 @@ import { useAuth } from '../features/auth/useAuth';
 const navItems = [
   { to: '/portfolio', label: 'Portfolio' },
   { to: '/dashboard', label: 'Dashboard' },
-  { to: '/teams', label: 'Teams' },
-  { to: '/tasks', label: 'Tasks' },
+  { to: '/rbac', label: 'RBAC' },
   { to: '/ai-assistant', label: 'RAG Demo' },
 ];
 

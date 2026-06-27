@@ -6,8 +6,7 @@ import { PublicOnlyRoute } from '../features/auth/PublicOnlyRoute';
 import { AppLayout } from './AppLayout';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
 import { PortfolioPage } from '../features/portfolio/PortfolioPage';
-import { TeamPage } from '../features/team/TeamPage';
-import { TasksPage } from '../features/tasks/TasksPage';
+import { RbacPage } from '../features/rbac/RbacPage';
 import { SmartAssistantPage } from '../features/ai/SmartAssistantPage';
 import { useAuth } from '../features/auth/useAuth';
 
@@ -29,8 +28,9 @@ export function AppRoutes() {
           <Route index element={<Navigate to="/portfolio" replace />} />
           <Route path="/portfolio" element={<PortfolioPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/teams" element={<TeamPage />} />
-          <Route path="/tasks" element={<TasksPage />} />
+          <Route path="/rbac" element={<RbacPage />} />
+          <Route path="/teams" element={<Navigate to="/rbac" replace />} />
+          <Route path="/tasks" element={<Navigate to="/rbac" replace />} />
           <Route path="/ai-assistant" element={<SmartAssistantPage />} />
         </Route>
       </Route>

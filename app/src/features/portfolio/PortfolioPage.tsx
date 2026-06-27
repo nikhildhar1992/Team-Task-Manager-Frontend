@@ -96,7 +96,7 @@ const POCS = [
     tagline: 'RAG · RBAC · Agentic AI · Orchestrator · CI/CD Agent · AWS',
     description:
       'End-to-end production POC combining RAG-based knowledge retrieval, RBAC-secured multi-team task management, and an AI orchestrator that auto-routes prompts to specialised agents (general, task-breakdown, operations). Also includes an autonomous CI/CD agent built with GitHub Actions, Cursor API, and Notion integrations — fully deployed on AWS.',
-    stack: ['RAG', 'Vector Embeddings', 'Agentic AI', 'Orchestrator', 'RBAC', 'Node.js', 'React', 'AWS', 'OpenAI API', 'GitHub Actions', 'Cursor API', 'Notion API'],
+    stack: ['RAG', 'Vector Embeddings', 'Agentic AI', 'Orchestrator', 'RBAC', 'Node.js', 'React', 'Docker', 'AWS', 'OpenAI API', 'GitHub Actions', 'Cursor API', 'Notion API'],
     url: 'https://koshurwaan.in',
     urlLabel: 'koshurwaan.in',
     accent: 'blue',

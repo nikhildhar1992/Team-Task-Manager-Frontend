@@ -105,8 +105,8 @@ const POCS = [
     title: 'Multi-Portal Job Search Agent',
     tagline: 'Azure · React PWA · Playwright · Whisper · Job APIs',
     description:
-      'A Progressive Web App that aggregates live job listings by scraping multiple portals via Playwright and job-portal APIs, transcribes voice queries using OpenAI Whisper, and runs on Azure Cloud infrastructure.',
-    stack: ['React PWA', 'Playwright', 'Whisper (STT)', 'Job Portal APIs', 'Azure Cloud', 'TypeScript'],
+      'A Resume-aware PWA that aggregates live job listings from Playwright-scraped portals (NaukriGulf, GulfTalent) and API-based job boards (Greenhouse, Lever, Ashby, Workable). Uses GPT-4o-mini to generate structured search criteria from your resume profile, OpenAI Whisper for voice-to-search (auto-fills country/platform dropdowns and triggers search automatically), and ranks results with a match-scoring engine. Features seen-job deduplication across sources and runs on Azure Cloud.',
+    stack: ['GPT-4o-mini', 'Multi-source aggregation', 'Match scoring', 'Resume-aware AI', 'Fastify'],
     url: 'https://jobsearchagent.koshurwaan.in',
     urlLabel: 'jobsearchagent.koshurwaan.in',
     accent: 'violet',

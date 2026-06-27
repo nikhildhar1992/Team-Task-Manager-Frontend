@@ -9,6 +9,7 @@ interface Product {
   unit: string;
   description: string;
   emoji: string;
+  image: string;
   badge?: string;
 }
 
@@ -25,6 +26,7 @@ const PRODUCTS: Product[] = [
     unit: 'per gram',
     description: 'Pure Grade A saffron hand-picked from Pampore fields. Rich aroma, deep crimson threads.',
     emoji: '🌸',
+    image: '/images/products/kesar.jpg',
     badge: 'Best Seller',
   },
   {
@@ -35,6 +37,7 @@ const PRODUCTS: Product[] = [
     unit: 'per 100g',
     description: 'Thin-skinned, sweet Kashmir valley almonds. Perfect for gifting and cooking.',
     emoji: '🫒',
+    image: '/images/products/almonds.jpg',
   },
   {
     id: 'walnuts',
@@ -44,6 +47,7 @@ const PRODUCTS: Product[] = [
     unit: 'per 100g',
     description: 'Papershell walnuts from the walnut groves of Shopian. Light, crisp, and full-flavoured.',
     emoji: '🌰',
+    image: '/images/products/walnuts.jpg',
     badge: 'Farm Fresh',
   },
   {
@@ -54,6 +58,7 @@ const PRODUCTS: Product[] = [
     unit: 'per 100g',
     description: 'Sun-dried green raisins from Kashmir. Naturally sweet with no added sugar.',
     emoji: '🫐',
+    image: '/images/products/raisins.jpg',
   },
   {
     id: 'rajma',
@@ -63,6 +68,7 @@ const PRODUCTS: Product[] = [
     unit: 'per 250g',
     description: 'Small, speckled kidney beans from high-altitude fields. Creamy texture when cooked.',
     emoji: '🫘',
+    image: '/images/products/rajma.jpg',
     badge: 'Local Favourite',
   },
   {
@@ -73,6 +79,7 @@ const PRODUCTS: Product[] = [
     unit: 'per 50g',
     description: 'Authentic blend of Kashmiri chilli, fennel, ginger, and cardamom. Flame-dried, not sun-dried.',
     emoji: '🌶️',
+    image: '/images/products/masala.jpg',
   },
   {
     id: 'chai',
@@ -82,6 +89,7 @@ const PRODUCTS: Product[] = [
     unit: 'per 50g',
     description: 'Pink tea (noon chai) made from Kashmiri gunpowder green tea, baking soda, and salt.',
     emoji: '🍵',
+    image: '/images/products/chai.jpg',
     badge: 'Signature',
   },
   {
@@ -92,6 +100,7 @@ const PRODUCTS: Product[] = [
     unit: 'per 50g',
     description: 'Traditional Kashmiri kahwa with whole spices: cinnamon, cloves, cardamom, and rose petals.',
     emoji: '☕',
+    image: '/images/products/kahwa.jpg',
     badge: 'Premium',
   },
 ];
@@ -175,7 +184,13 @@ function ProductCard({
   return (
     <div className="relative rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
       {product.badge ? <Badge text={product.badge} /> : null}
-      <div className="text-4xl mb-3">{product.emoji}</div>
+      <div className="mb-3 h-28 w-full overflow-hidden rounded-lg bg-slate-100">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="h-full w-full object-cover"
+        />
+      </div>
       <h3 className="font-semibold text-slate-900 text-sm">{product.name}</h3>
       <p className="text-xs text-slate-400 mb-1">{product.nameKashmiri}</p>
       <p className="text-xs text-slate-500 leading-relaxed mb-3">{product.description}</p>

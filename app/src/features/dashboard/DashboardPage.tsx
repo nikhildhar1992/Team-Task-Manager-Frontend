@@ -146,6 +146,19 @@ const PRODUCTS: Product[] = [
     category: 'traditional',
     badge: 'Home Style',
   },
+  {
+    id: 'isband',
+    name: 'Kashmiri Isband',
+    nameKashmiri: 'اِزبند',
+    price: 165,
+    unit: 'per 100g',
+    description:
+      'Wild rue (Peganum harmala) seeds from Kashmir — burnt at weddings and celebrations in a copper Isband-soz. Fragrant smoke traditionally believed to ward off the evil eye and bless new beginnings.',
+    emoji: '🌿',
+    image: '/images/products/isband.jpg',
+    category: 'traditional',
+    badge: 'Sacred Ritual',
+  },
 ];
 
 const KESAR_VIDEOS = [
@@ -216,7 +229,7 @@ function ProductCard({
 }) {
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition hover:border-amber-200 hover:shadow-md">
-      <div className="relative aspect-[4/3] bg-gradient-to-b from-slate-50 to-white p-4">
+      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-b from-slate-50 to-white p-4">
         {product.badge ? (
           <span className="absolute left-3 top-3 z-10 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white shadow">
             {product.badge}
@@ -225,10 +238,10 @@ function ProductCard({
         <img
           src={product.image}
           alt={product.name}
-          className="mx-auto h-full max-h-[130px] w-full object-contain transition-transform duration-300 group-hover:scale-105"
+          className="mx-auto h-full max-h-[130px] w-full object-contain transition-transform duration-[1400ms] ease-in-out group-hover:scale-110"
         />
         {/* Full description — visible only on hover */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-slate-900/90 via-slate-900/80 to-transparent px-4 pb-4 pt-10 opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:opacity-100">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-slate-900/90 via-slate-900/80 to-transparent px-4 pb-4 pt-10 opacity-0 transition-all duration-500 ease-in-out group-hover:translate-y-0 group-hover:opacity-100">
           <p className="text-xs leading-relaxed text-white">{product.description}</p>
         </div>
       </div>
